@@ -5,11 +5,16 @@ using System.Threading.Tasks;
 using HttpWebServer.domain;
 using Newtonsoft.Json;
 using System.Web;
+using HttpWebServer.Controller;
+using HttpWebServer.Controllers;
+using HttpWebServer.Model;
 
 namespace HttpWebServer
 {
     class Program
     {
+        public static BaseModel Database = new DatabaseModel();
+ 
         static async Task Main(string[] args)
         {
             await Listen();
@@ -26,53 +31,26 @@ namespace HttpWebServer
             {
                 HttpListenerContext context = await listener.GetContextAsync();
                 HttpListenerRequest request = context.Request;
-                HttpListenerResponse response = context.Response;
-
-                string file = Directory.GetCurrentDirectory() + request.Url.LocalPath;
-
-
-                if (File.Exists(file))
+                BaseController targetController;
+                if (request.Url.LocalPath.Contains("vote"))
                 {
-                    if (request.Url.LocalPath.Contains("list.html"))
+                    targetController = new VoteController();
+                }
+                else
+                {
+                    if (request.Url.LocalPath.Contains("list"))
                     {
-                        file = HandleListRoute(file);
+                        targetController = new ListController();
+                    }
+                    else
+                    {
+                        targetController = new IndexController();
                     }
                 }
-                else if (request.Url.LocalPath.Contains("vote"))
-                {
-                    HandleVoteRouter(request.Url.Query);
-                    file = File.ReadAllText("" + "list.html");
-                    file = HandleListRoute(file);
-                }
 
-                byte[] buffer = System.Text.Encoding.UTF8.GetBytes(file);
-                response.ContentLength64 = buffer.Length;
-                Stream output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Close();
+                targetController.Handle(context);
+
             }
-        }
-
-        public static void HandleVoteRouter(string queryString)
-        {
-            var params2 = HttpUtility.ParseQueryString(queryString);
-            if (params2["attend"] == true)
-            {
-                string name = params2["name"];
-            }
-        }
-
-        public static string HandleListRoute(string file)
-        {
-            string fileJson = File.ReadAllText(Directory.GetCurrentDirectory() + "json1.json");
-            Database data = JsonConvert.DeserializeObject<Database>(fileJson);
-            var userList = "";
-            foreach (var user in data.Users)
-            {
-                userList += $"<li>{user.Name}</li>";
-            }
-
-            return file.Replace("{{list}}", userList);
         }
     }
 }
