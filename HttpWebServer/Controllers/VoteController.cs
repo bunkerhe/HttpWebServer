@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace HttpWebServer.Controller
+namespace HttpWebServer.Controllers
 {
     class VoteController : BaseController
     {
@@ -28,6 +28,7 @@ namespace HttpWebServer.Controller
                 string name = params2["name"];
 
                 Program.Database.Add(name);
+                Program.ParticipantsController.ResetCash();
             }
 
             new IndexController().Handle(httpContext);

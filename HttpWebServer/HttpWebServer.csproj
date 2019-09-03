@@ -84,7 +84,7 @@
   <ItemGroup>
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\IndexController.cs" />
-    <Compile Include="Controllers\ListController.cs" />
+    <Compile Include="Controllers\ParticipantsController.cs" />
     <Compile Include="Controllers\VoteController.cs" />
     <Compile Include="domain\Database.cs" />
     <Compile Include="Model\BaseModel.cs" />
@@ -98,7 +98,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="JavaScript1.js" />
+    <Content Include="Scripts\JavaScript1.js" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

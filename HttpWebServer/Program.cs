@@ -1,11 +1,6 @@
 ﻿using System;
-using System.IO;
 using System.Net;
 using System.Threading.Tasks;
-using HttpWebServer.domain;
-using Newtonsoft.Json;
-using System.Web;
-using HttpWebServer.Controller;
 using HttpWebServer.Controllers;
 using HttpWebServer.Model;
 
@@ -13,8 +8,9 @@ namespace HttpWebServer
 {
     class Program
     {
-        public static BaseModel Database = new DatabaseModel();
- 
+        public static readonly BaseModel Database = new DatabaseModel();
+        public static readonly ParticipantsController ParticipantsController = new ParticipantsController();
+
         static async Task Main(string[] args)
         {
             await Listen();
@@ -32,15 +28,16 @@ namespace HttpWebServer
                 HttpListenerContext context = await listener.GetContextAsync();
                 HttpListenerRequest request = context.Request;
                 BaseController targetController;
+
                 if (request.Url.LocalPath.Contains("vote"))
                 {
                     targetController = new VoteController();
                 }
                 else
                 {
-                    if (request.Url.LocalPath.Contains("list"))
+                    if (request.Url.LocalPath.Contains("participants"))
                     {
-                        targetController = new ListController();
+                        targetController = ParticipantsController;
                     }
                     else
                     {
@@ -49,7 +46,6 @@ namespace HttpWebServer
                 }
 
                 targetController.Handle(context);
-
             }
         }
     }
