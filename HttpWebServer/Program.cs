@@ -6,7 +6,7 @@ using HttpWebServer.Model;
 
 namespace HttpWebServer
 {
-    class Program
+    static class Program
     {
         public static readonly BaseModel Database = new DatabaseModel();
         public static readonly ParticipantsController ParticipantsController = new ParticipantsController();
