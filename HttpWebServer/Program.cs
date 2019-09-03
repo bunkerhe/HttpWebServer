@@ -19,7 +19,7 @@ namespace HttpWebServer
         private static async Task Listen()
         {
             HttpListener listener = new HttpListener();
-            listener.Prefixes.Add("http://localhost:8881/");
+            listener.Prefixes.Add("http://*:8881/");
             listener.Start();
             Console.WriteLine("Ожидание подключений...");
 
