@@ -6,11 +6,17 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using HttpWebServer.Infrastructure;
 
 namespace HttpWebServer.Controllers
 {
     abstract class BaseController
     {
+        public ILogger Logger { get; set; }
+        public BaseController(ILogger logger)
+        {
+            Logger = logger;
+        }
         public abstract void Handle(HttpListenerContext httpContext);
 
         protected string GetView(string viewName)
@@ -22,13 +28,15 @@ namespace HttpWebServer.Controllers
             return string.Empty;
         }
 
-        protected void Render(HttpListenerContext hhtpContext, string html)
+        protected void Render(HttpListenerContext httpContext, string html)
         {
             byte[] buffer = System.Text.Encoding.UTF8.GetBytes(html);
-            hhtpContext.Response.ContentLength64 = buffer.Length;
-            Stream output = hhtpContext.Response.OutputStream;
+            httpContext.Response.ContentLength64 = buffer.Length;
+            Stream output = httpContext.Response.OutputStream;
             output.Write(buffer, 0, buffer.Length);
             output.Close();
+
+            Logger.Log(httpContext.Request.Url.ToString());
         }
     }
 

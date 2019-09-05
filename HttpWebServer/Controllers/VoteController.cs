@@ -9,11 +9,19 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
+using HttpWebServer.BL;
+using HttpWebServer.Infrastructure;
 
 namespace HttpWebServer.Controllers
 {
     class VoteController : BaseController
     {
+        private IParticipantsService Service { get; set; }
+        private ILogger logger { get; set; }
+        public VoteController(IParticipantsService service, ILogger logger) : base(logger)
+        {
+            Service = service;
+        }
         public override void Handle(HttpListenerContext httpContext)
         {
             string queryString;
@@ -23,15 +31,18 @@ namespace HttpWebServer.Controllers
             }
 
             var params2 = HttpUtility.ParseQueryString(queryString);
-            if (params2["attend"] == "on")
+            string name = params2["name"];
+            var attend = params2["attend"] == "on";
+            string reason = params2["reason"];
+            if (!String.IsNullOrEmpty(name))
             {
-                string name = params2["name"];
-
-                Program.Database.Add(name);
-                Program.ParticipantsController.ResetCash();
+                Service.Vote(name, attend, reason); 
             }
 
-            new IndexController().Handle(httpContext);
+            new IndexController(logger).Handle(httpContext);
+            //httpContext.Response.RedirectLocation = "index.html";
+            //httpContext.Response.StatusCode = (int)HttpStatusCode.Found;
+            //httpContext.Response.Close();
         }
     }
 }

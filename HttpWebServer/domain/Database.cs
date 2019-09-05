@@ -8,11 +8,19 @@ namespace HttpWebServer.domain
 {
     class Database
     {
-        public List<User> Users { get; set; }
+        public List<Participant> Participants { get; set; }
     }
 
-    class User
+    class Participant
     {
+        public Participant(string name, bool isAttend, string reason)
+        {
+            Name = name;
+            IsAttend = isAttend;
+            Reason = reason;
+        }
         public string Name { get; set; }
+        public bool IsAttend { get; set; }
+        public string Reason { get; set; }
     }
 }
